@@ -326,6 +326,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         repaint();
         if (gameOver) {
             gameLoop.stop();
+            
         }
 
     }

@@ -1,9 +1,20 @@
 package idi135;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.List;
+import java.util.ArrayList;
+
 import javax.swing.*;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import idi135.FirebaseService;  
+import idi135.PlayerScore;      
 
 //extends Jpanele = GUI
 public class PacMan extends JPanel implements ActionListener, KeyListener {
@@ -70,7 +81,8 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             this.y = this.startY;
         }
     }
-     
+    
+    private String playerName;
     private int rowCount = 21;
     private int columnCount = 19;
     private int tileSize = 32;
@@ -131,6 +143,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
 
 
     PacMan() {
+        
         setPreferredSize(new Dimension(boardWidth, boardHeight));
         setBackground(Color.BLACK);
         addKeyListener(this);
@@ -266,7 +279,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             if (collision(ghost, pacman)) {
                 lives -= 1;
                 if (lives == 0) {
-                    gameOver = true;
+                    gameOver();
                     return;
                 }
                 resetPositions();
@@ -320,14 +333,65 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+    private void showLeaderboard() {
+    // Display the leaderboard
+    FirebaseService.getLeaderboard(new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+
+            String leaderboardMessage = "Leaderboard:\n";
+            List<PlayerScore> leaderboard = new ArrayList<>();
+            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                PlayerScore playerScore = snapshot.getValue(PlayerScore.class);
+                leaderboard.add(playerScore);
+            }
+
+            // Sort the leaderboard by score (highest to lowest)
+            leaderboard.sort((p1, p2) -> Integer.compare(p2.score, p1.score));
+
+            // Build the leaderboard message
+            for (int i = 0; i < leaderboard.size(); i++) {
+                PlayerScore playerScore = leaderboard.get(i);
+                leaderboardMessage += (i + 1) + ". " + playerScore.name + " - " + playerScore.score + " points\n";
+            }
+
+            // Show leaderboard in a dialog box
+            JOptionPane.showMessageDialog(PacMan.this, leaderboardMessage, "Leaderboard", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            JOptionPane.showMessageDialog(PacMan.this, "Error loading leaderboard.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    });
+    }
+
+    // private void saveScore() {
+    //     Leaderboard leaderboard = new Leaderboard();
+    //     leaderboard.saveScore(playerName, score); 
+    // }
+
+    public void gameOver() {
+    gameOver = true;
+    gameLoop.stop();  
+  
+    String playerName = JOptionPane.showInputDialog("Enter your username:");
+        if (playerName == null || playerName.trim().isEmpty()) {
+            playerName = "Player" + new Random().nextInt(1000); 
+        }
+    
+    if (playerName != null && !playerName.trim().isEmpty()) {
+        FirebaseService.writeLeaderboard(playerName, score);
+    }
+        showLeaderboard();
+    }
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         move();
         repaint();
-        if (gameOver) {
-            gameLoop.stop();
-            
-        }
+       
 
     }
 

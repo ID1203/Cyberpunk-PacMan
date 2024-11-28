@@ -1,13 +1,24 @@
 package idi135;
 
 import java.awt.Color;
-
+import java.util.Random;
+import java.io.IOException;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class App 
 {
      public static void main( String[] args )
     {
+
+        try {
+            FirebaseService.initializeFirebase();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+
         int rowCount = 23;
         int columnCount = 19;
         int tileSize = 32;

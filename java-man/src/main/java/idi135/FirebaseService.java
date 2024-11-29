@@ -11,17 +11,20 @@ import java.io.IOException;  // Import IOException
 
 public class FirebaseService {
 
+    //Static variable for database
     private static FirebaseDatabase database;
 
     // Initialize Firebase SDK
+    //Catcvh asy input output merrorss through exception
     public static void initializeFirebase() throws IOException {
+        //checks to see if database has been intialized
         if (FirebaseApp.getApps().isEmpty()) {
             try {
                 // Point this to your Firebase Admin SDK service account key
                 FileInputStream serviceAccount =
                         new FileInputStream("java-man/src/main/java/idi135/pac-man-4fccb-firebase-adminsdk-1zlrp-8836582a4b.json");
                         
-
+                //This creates a FirebaseOptions object, which holds the configuration for Firebase
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                         .setDatabaseUrl("https://pac-man-4fccb-default-rtdb.europe-west1.firebasedatabase.app/") // Replace with your Firebase Realtime DB URL

@@ -1,10 +1,9 @@
 package idi135;
 
-import java.awt.Color;
-import java.util.Random;
+
 import java.io.IOException;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+
 
 public class App 
 {

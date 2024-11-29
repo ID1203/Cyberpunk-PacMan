@@ -19,11 +19,12 @@ public class FirebaseService {
             try {
                 // Point this to your Firebase Admin SDK service account key
                 FileInputStream serviceAccount =
-                        new FileInputStream("java-man/src/main/java/idi135/multi-man-e8fc8-firebase-adminsdk-r7wf7-2e669e0c1c.json");
+                        new FileInputStream("java-man/src/main/java/idi135/pac-man-4fccb-firebase-adminsdk-1zlrp-8836582a4b.json");
+                        
 
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .setDatabaseUrl("https://multi-man-e8fc8-default-rtdb.europe-west1.firebasedatabase.app/") // Replace with your Firebase Realtime DB URL
+                        .setDatabaseUrl("https://pac-man-4fccb-default-rtdb.europe-west1.firebasedatabase.app/") // Replace with your Firebase Realtime DB URL
                         .build();
 
                 // Initialize Firebase with the options
@@ -43,7 +44,7 @@ public class FirebaseService {
             System.err.println("Firebase is not initialized.");
             return;
         }
-
+        
         DatabaseReference ref = database.getReference("leaderboard");
         PlayerScore playerScore = new PlayerScore(playerName, score);
         ref.push().setValueAsync(playerScore);

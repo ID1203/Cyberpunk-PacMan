@@ -25,14 +25,14 @@ public class FirebaseService {
                         new FileInputStream("java-man/src/main/java/idi135/pac-man-4fccb-firebase-adminsdk-1zlrp-8836582a4b.json");
                         
                 //This creates a FirebaseOptions object, which holds the configuration for Firebase
-                FirebaseOptions options = new FirebaseOptions.Builder()
+                FirebaseOptions options =  FirebaseOptions.builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                         .setDatabaseUrl("https://pac-man-4fccb-default-rtdb.europe-west1.firebasedatabase.app/") // Replace with your Firebase Realtime DB URL
                         .build();
 
                 // Initialize Firebase with the options
                 FirebaseApp.initializeApp(options);
-                database = FirebaseDatabase.getInstance(); // Set the database reference
+                database = FirebaseDatabase.getInstance(); // Set the database reference to be used to read and write 
                 System.out.println("Firebase Initialized Successfully!");
             } catch (IOException e) {
                 System.err.println("Error initializing Firebase: " + e.getMessage());
@@ -47,13 +47,16 @@ public class FirebaseService {
             System.err.println("Firebase is not initialized.");
             return;
         }
-        
+        //checks for leaderboard node
         DatabaseReference ref = database.getReference("leaderboard");
+        //created new playerscore
         PlayerScore playerScore = new PlayerScore(playerName, score);
+        //pushes new data to database and created uniqueid
         ref.push().setValueAsync(playerScore);
     }
-
+    //collects leaderbaord data
     public static void getLeaderboard(ValueEventListener listener) {
+    //finds leaderbaord node
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("leaderboard");
     ref.addListenerForSingleValueEvent(listener);  // Add listener to fetch data
 }

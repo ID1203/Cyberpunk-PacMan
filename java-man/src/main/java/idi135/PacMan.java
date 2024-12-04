@@ -129,9 +129,10 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         loadImages();
         loadMap();
         initializeGhosts();
-
         gameLoop = new Timer(50, this); // 20fps (1000/50)
         gameLoop.start();
+        SoundManager.playSound("java-man/src/main/resources/pacman_beginning.wav");
+        
     }
 
     // Load game element images
@@ -257,6 +258,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
                     gameOver();
                     return;
                 }
+                SoundManager.playSound("java-man/src/main/resources/pacman_death.wav");
                 resetPositions();
             }
 
@@ -280,12 +282,13 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             if (collision(pacman, food)) {
                 foodEaten = food;
                 score += 10;
+                SoundManager.playSound("java-man/src/main/resources/pacman_chomp.wav");
             }
         }
         foods.remove(foodEaten);
 
         if (foods.isEmpty()) {
-            loadMap();
+            loadMap();   
             resetPositions();
         }
     }

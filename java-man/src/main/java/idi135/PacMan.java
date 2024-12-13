@@ -43,6 +43,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
 
     private ScorePanel scorePanel;
     private LivesPanel livesPanel;
+    private GameOverScreen gameOverScreen;
 
 
     
@@ -181,6 +182,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         scorePanel.updateLevel(level);
         // livesPanel.updateLives(lives);
         scorePanel.updateScore(score);
+        gameOverScreen = new GameOverScreen();
 
         setPreferredSize(new Dimension(boardWidth, boardHeight));
         setBackground(Color.BLACK);
@@ -266,6 +268,10 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         draw(g);
+
+        if (gameOver) {
+            gameOverScreen.paintComponent(g); 
+        }
     }
 
     // Draw game elements on screen
@@ -368,7 +374,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     // Game Over logic
     public void gameOver() {
         gameOver = true;
-        gameLoop.stop();
+        gameLoop.stop(); 
 
         String playerName = JOptionPane.showInputDialog("Enter your username:");
         if (playerName == null || playerName.trim().isEmpty()) {
@@ -380,14 +386,14 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         }
 
         showLeaderboard();
-        showGameOver();
+        // showGameOver();
     }
 
-    public void showGameOver() {
-        String message = "GAME OVER\nYour Score: " + score;
-        JOptionPane.showMessageDialog(null, message, "Game Over", JOptionPane.PLAIN_MESSAGE);
+    // public void showGameOver() {
+    //     String message = "GAME OVER\nYour Score: " + score;
+    //     JOptionPane.showMessageDialog(null, message, "Game Over", JOptionPane.PLAIN_MESSAGE);
 
-    }
+    // }
 
     public void nextLevel() {
         if (level < tileMaps.length - 1) {

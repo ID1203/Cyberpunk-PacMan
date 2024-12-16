@@ -16,15 +16,15 @@ public class ScorePanel extends JPanel {
         add(scoreLabel);
         add(levelLabel);
 
-        scoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        levelLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        scoreLabel.setFont(new Font("Courier New", Font.BOLD, 16));
+        levelLabel.setFont(new Font("Courier New", Font.BOLD, 16));
 
         setBackground(new Color(0, 0, 0));
 
         scoreLabel.setForeground(Color.YELLOW);
         levelLabel.setForeground(Color.YELLOW);
 
-        setBorder(BorderFactory.createEmptyBorder(3, 200, 5, 20));
+        setBorder(BorderFactory.createEmptyBorder(3, 200, 5, 100));
     }
     
     public void updateScore(int score){

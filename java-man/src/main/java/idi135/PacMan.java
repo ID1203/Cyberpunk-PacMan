@@ -43,6 +43,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
 
     private ScorePanel scorePanel;
     private LivesPanel livesPanel;
+    private GameOverScreen gameOverScreen;
 
 
     
@@ -181,6 +182,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         scorePanel.updateLevel(level);
         // livesPanel.updateLives(lives);
         scorePanel.updateScore(score);
+        gameOverScreen = new GameOverScreen();
 
         setPreferredSize(new Dimension(boardWidth, boardHeight));
         setBackground(Color.BLACK);
@@ -266,6 +268,10 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         draw(g);
+
+        if (gameOver) {
+            gameOverScreen.paintComponent(g); 
+        }
     }
 
     // Draw game elements on screen
@@ -369,25 +375,52 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     public void gameOver() {
         gameOver = true;
         gameLoop.stop();
-
-        String playerName = JOptionPane.showInputDialog("Enter your username:");
-        if (playerName == null || playerName.trim().isEmpty()) {
-            playerName = "Player" + new Random().nextInt(1000);
+    
+        // Create a custom dialog for username input
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BorderLayout());
+        inputPanel.setBackground(Color.BLACK);
+        inputPanel.setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 5));
+    
+        JLabel label = new JLabel("Enter your username:", SwingConstants.CENTER);
+        label.setFont(new Font("Courier New", Font.BOLD, 18)); // Clean arcade-style font
+        label.setForeground(Color.CYAN);
+    
+        JTextField textField = new JTextField();
+        textField.setFont(new Font("Courier New", Font.PLAIN, 14));
+        textField.setBackground(Color.BLACK);
+        textField.setForeground(Color.YELLOW);
+        textField.setCaretColor(Color.YELLOW);
+        
+    
+        inputPanel.add(label, BorderLayout.NORTH);
+        inputPanel.add(textField, BorderLayout.CENTER);
+    
+        int result = JOptionPane.showConfirmDialog(
+            PacMan.this,
+            inputPanel,
+            "Game Over",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE
+        );
+    
+        String playerName = null;
+        if (result == JOptionPane.OK_OPTION) {
+            playerName = textField.getText();
+            if (playerName == null || playerName.trim().isEmpty()) {
+                playerName = "Player" + new Random().nextInt(1000);
+            }
         }
-
+    
         if (playerName != null && !playerName.trim().isEmpty()) {
             FirebaseService.writeLeaderboard(playerName, score);
         }
-
+    
         showLeaderboard();
-        showGameOver();
+        // showGameOver();
     }
 
-    public void showGameOver() {
-        String message = "GAME OVER\nYour Score: " + score;
-        JOptionPane.showMessageDialog(null, message, "Game Over", JOptionPane.PLAIN_MESSAGE);
 
-    }
 
     public void nextLevel() {
         if (level < tileMaps.length - 1) {
@@ -409,32 +442,50 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         FirebaseService.getLeaderboard(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String leaderboardMessage = "Leaderboard:\n";
                 List<PlayerScore> leaderboard = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     PlayerScore playerScore = snapshot.getValue(PlayerScore.class);
                     leaderboard.add(playerScore);
                 }
-
+    
                 // Sort leaderboard by score (highest to lowest)
                 leaderboard.sort((p1, p2) -> Integer.compare(p2.score, p1.score));
-
-                // Build leaderboard message
-                for (int i = 0; i < 5; i++) {
+    
+                // Create custom leaderboard panel
+                JPanel leaderboardPanel = new JPanel();
+                leaderboardPanel.setLayout(new GridLayout(6, 1)); // Header + top 5 players
+                leaderboardPanel.setBackground(Color.BLACK);
+                leaderboardPanel.setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 5));
+    
+                JLabel header = new JLabel("Leaderboard", SwingConstants.CENTER);
+                header.setForeground(Color.CYAN);
+                header.setFont(new Font("Press Start 2P", Font.BOLD, 24)); // Replace with a pixel font
+                leaderboardPanel.add(header);
+    
+                for (int i = 0; i < Math.min(5, leaderboard.size()); i++) {
                     PlayerScore playerScore = leaderboard.get(i);
-                    leaderboardMessage += (i + 1) + ". " + playerScore.name + " - " + playerScore.score + " points\n";
+                    JLabel entry = new JLabel((i + 1) + ". " + playerScore.name + " - " + playerScore.score + " points", SwingConstants.CENTER);
+                    entry.setForeground(Color.YELLOW);
+                    entry.setFont(new Font("Press Start 2P", Font.PLAIN, 18)); // Replace with a pixel font
+                    leaderboardPanel.add(entry);
                 }
-
-                // Show leaderboard in dialog
-                JOptionPane.showMessageDialog(PacMan.this, leaderboardMessage, "Leaderboard", JOptionPane.INFORMATION_MESSAGE);
+    
+                // Display leaderboard in a dialog with a custom title and background
+                JOptionPane.showMessageDialog(
+                    PacMan.this,
+                    leaderboardPanel,
+                    "Cyberpunk PacMan",
+                    JOptionPane.PLAIN_MESSAGE
+                );
             }
-
+    
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 JOptionPane.showMessageDialog(PacMan.this, "Error loading leaderboard.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
+    
 
     @Override
     public void actionPerformed(ActionEvent e) {

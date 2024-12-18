@@ -79,25 +79,9 @@ Example of Level 1:
 ```
 
 ## Screenshots
-_Include screenshots of gameplay and leaderboard to showcase the UI._
 
-## Contribution
-1. Fork the repository.
-2. Create a feature branch:
-   ```bash
-   git checkout -b feature/your-feature
-   ```
-3. Commit changes and push:
-   ```bash
-   git add .
-   git commit -m "Add your message"
-   git push origin feature/your-feature
-   ```
-4. Create a pull request.
+![image](https://github.com/user-attachments/assets/bbfc4942-036e-4512-9bb8-2742736c2422)
 
-## License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
 
-## Acknowledgments
-- Inspired by the classic PacMan game.
-- Special thanks to Firebase for seamless cloud integration.
+
+

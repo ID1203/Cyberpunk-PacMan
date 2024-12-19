@@ -35,6 +35,12 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     private HashSet<Block> ghosts;
     private Block pacman;
 
+    private Block powerUp;
+    private boolean isPowerUpActive = false;
+    private int powerUpDuration = 20000; 
+    private long powerUpStartTime;
+
+
     // Directions and game loop
     private final char[] directions = {'U', 'D', 'L', 'R'};
     private final Random random = new Random();
@@ -49,72 +55,119 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     
     private String[][] tileMaps = {
         {
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXoXbXXXX",
-        "XXXXXXXXXXXXXXXXXXX", 
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXX   P   XXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX",
-        "XXXXXXXXXXXXXXXXXXX"
+            "XXXXXXXXXXXXXXXXXXX",
+            "X  XXX  X X  XXX  X",
+            "X   XX  X X  XX  XX",
+            "X  XXX  X X  XXX  X",
+            "XX  XX  X X  XX  XX",
+            "X  XXXb X X pXXX  X",
+            "XX  XX  X X  XX  XX",
+            "X  XXX  X X  XXX  X",
+            "XX  XX  X X  XX  XX",
+            "X                 X",
+            "XXXX     P     XXXX",
+            "X                 X",
+            "X   XX  X X  XX  XX",
+            "X  XXX  X X  XXX  X",
+            "X   XX  X X  XX  XX",
+            "X  XXX  X X  XXX  X",
+            "X   XXo X Xr XX  XX",
+            "X  XXX  X X  XXX  X",
+            "X   XX  X X  XX  XX",
+            "X  XXX  X X  XXX  X",
+            "XXXXXXXXXXXXXXXXXXX",
+        },
+        {
+            "XXXXXXXXXXXXXXXXXXX",
+            "X PXX    p XX   b X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X", 
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X  XX  XX  XX  XX X",
+            "X     rXX  Co  XX X",
+            "XXXXXXXXXXXXXXXXXXX"
+        },
+         {
+            "XXXXXXXXXXXXXXXXXXX", 
+            "X                 X", 
+            "X XX X X XX  XXXX X", 
+            "X    X X     X    X", 
+            "X XX X XXXXX XXX XX", 
+            "X    X       X    X",  
+            "XXXX XXXX XXXX XXXX",  
+            "OOOX X       X XOOO",  
+            "XXXX X XXrXX X XXXX",  
+            "O  C    bpo       O",  
+            "XXXX X XXXXX X XXXX",  
+            "OOOX X       X XOOO",  
+            "XXXX X XXXXX X XXXX",  
+            "X    X      XX    X", 
+            "X XX XX XXX XX XX X", 
+            "X  X     P     X  X",   
+            "XX X X XXXXX X X XX",   
+            "X    X   X   X    X",   
+            "X XXXXXX X XXXXXX X",   
+            "X                 X",   
+            "XXXXXXXXXXXXXXXXXXX"    
         },
         {
         "XXXXXXXXXXXXXXXXXXX", 
-        "X        X        X", 
-        "X XX XXX X XXX XX X",
         "X                 X", 
-        "X XX X XXXXX X XX X", 
-        "X    X       X    X",
+        "X XX X XX X X XXXXX", 
+        "X    X            X", 
+        "X XX   XXXX XX X XX", 
+        "X    X       X    X", 
         "XXXX XXXX XXXX XXXX", 
         "OOOX X       X XOOO", 
-        "XXXX X XXrXX X XXXX",
-        "O       bpo       O", 
+        "XXXX X XXrXX X XXXX", 
+        "X       bpo       X", 
         "XXXX X XXXXX X XXXX", 
-        "OOOX X       X XOOO",
+        "OOOX X       X XOOO", 
         "XXXX X XXXXX X XXXX", 
-        "X        X        X", 
-        "X XX XXX X XXX XX X",
-        "X  X     P     X  X", 
+        "X  C   X   X      X", 
+        "X XX XXX X XXX XX X", 
+        "X  X     X     X  X", 
         "XX X X XXXXX X X XX", 
-        "X    X   X   X    X",
-        "X XXXXXX X XXXXXX X", 
-        "X                 X", 
+        "X    X   P   X    X", 
+        "X XXXXXX X XXXXXX X",
+        "X    X   X   X    X", 
         "XXXXXXXXXXXXXXXXXXX"
-    }, {
-        "XXXXXXXXXXXXXXXXXXX", 
-        "X                 X", 
-        "X XX X X XX  XXXX X", 
-        "X    X X     X    X", 
-        "X XX X XXXXX XXX XX", 
-        "X    X       X    X",  
-        "XXXX XXXX XXXX XXXX",  
-        "OOOX X       X XOOO",  
-        "XXXX X XXrXX X XXXX",  
-        "O       bpo       O",  
-        "XXXX X XXXXX X XXXX",  
-        "OOOX X       X XOOO",  
-        "XXXX X XXXXX X XXXX",  
-        "X    X      XX    X", 
-        "X XX XX XXX XX XX X", 
-        "X  X     P     X  X",   
-        "XX X X XXXXX X X XX",   
-        "X    X   X   X    X",   
-        "X XXXXXX X XXXXXX X",   
-        "X                 X",   
-        "XXXXXXXXXXXXXXXXXXX"    
+        },
+        {
+            "XXXXXXXXXXXXXXXXXXX", 
+            "X        X        X", 
+            "X XX XXX X XXX XX X",
+            "X                 X", 
+            "X XX X XXXXX X XX X", 
+            "X    X       X    X",
+            "XXXX XXXX XXXX XXXX", 
+            "OOOX X       X XOOO", 
+            "XXXX X XXrXX X XXXX",
+            "O       bpo       O", 
+            "XXXX X XXXXX X XXXX", 
+            "OOOX X       X XOOO",
+            "XXXX X XXXXX X XXXX", 
+            "X        X  C     X", 
+            "X XX XXX X XXX XX X",
+            "X  X     P     X  X", 
+            "XX X X XXXXX X X XX", 
+            "X    X   X   X    X",
+            "X XXXXXX X XXXXXX X", 
+            "X                 X", 
+            "XXXXXXXXXXXXXXXXXXX"
         }
     };
 
@@ -250,6 +303,9 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
                     case ' ': // Food
                         foods.add(new Block(foodImage, x + 14, y + 14, 4, 4));
                         break;
+                    case 'C': // Cherry Power-Up
+                        powerUp = new Block(cherryImage, x, y, tileSize, tileSize); // Adjust position/size for visibility
+                        break;
                 }
             }
         }
@@ -278,6 +334,16 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     public void draw(Graphics g) {
         g.drawImage(pacman.image, pacman.x, pacman.y, pacman.width, pacman.height, null);
 
+        if (isPowerUpActive) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setColor(new Color(255, 255, 0, 50)); // Transparent yellow tint
+            g2d.fillRect(0, 0, boardWidth, boardHeight); // Overlay over entire screen
+        }
+
+        if (powerUp != null) {
+            g.drawImage(powerUp.image, powerUp.x, powerUp.y, powerUp.width, powerUp.height, null);
+        }
+
         for (Block ghost : ghosts) {
             g.drawImage(ghost.image, ghost.x, ghost.y, ghost.width, ghost.height, null);
         }
@@ -299,32 +365,62 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         if (pacman.x < 0) pacman.x = boardWidth - tileSize;
         if (pacman.x + pacman.width > boardWidth) pacman.x = 0;
 
-        for (Block wall : walls) {
-            if (collision(pacman, wall)) {
-                pacman.x -= pacman.velocityX;
-                pacman.y -= pacman.velocityY;
-                break;
-            }
+        if (powerUp != null && collision(pacman, powerUp)) {
+            powerUp = null; 
+            isPowerUpActive = true;
+            powerUpStartTime = System.currentTimeMillis();
+            SoundManager.playSound("java-man/src/main/resources/pacman_eatfruit.wav");
         }
 
+        if (isPowerUpActive) {
+            long elapsedTime = System.currentTimeMillis() - powerUpStartTime;
+        
+            // Temporary invincibility
+            for (Block ghost : ghosts) {
+                if (collision(pacman, ghost)) {
+                    ghost.reset(); // Reset ghost position instead of reducing lives
+                }
+            }
+        
+            // End power-up after duration
+            if (elapsedTime > powerUpDuration) {
+                isPowerUpActive = false;
+            }
+        }
+        
         // Handle ghost collisions
         for (Block ghost : ghosts) {
             ghost.x += ghost.velocityX;
             ghost.y += ghost.velocityY;
-
-            if (collision(ghost, pacman)) {
-                lives--;
-                livesPanel.updateLives(lives);
-                if (lives == 0) {
-                    gameOver();
-                    return;
+            
+            if (collision(pacman, ghost)) {
+                if (isPowerUpActive) {
+                    ghost.reset(); 
+                    score += 50; 
+                    scorePanel.updateScore(score);
+                } else {
+                    lives--;
+                    livesPanel.updateLives(lives);
+                    if (lives == 0) {
+                        gameOver();
+                        return;
+                    }
                 }
                 SoundManager.playSound("java-man/src/main/resources/pacman_death.wav");
                 resetPositions();
             }
-
+            
             if (ghost.y == tileSize * 9 && ghost.direction != 'U' && ghost.direction != 'D') {
                 ghost.updateDirection('U');
+            }
+                    
+    
+            for (Block wall : walls) {
+                if (collision(pacman, wall)) {
+                    pacman.x -= pacman.velocityX;
+                    pacman.y -= pacman.velocityY;
+                    break;
+                }
             }
 
             for (Block wall : walls) {
@@ -342,7 +438,8 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         for (Block food : foods) {
             if (collision(pacman, food)) {
                 foodEaten = food;
-                score += 10;
+                int points = isPowerUpActive ? 20 : 10; // Double points if power-up is active
+                score += points;
                 scorePanel.updateScore(score);
                 SoundManager.playSound("java-man/src/main/resources/pacman_chomp.wav");
             }
@@ -354,12 +451,12 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    // Collision detection between two blocks
+    
     public boolean collision(Block a, Block b) {
         return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
     }
 
-    // Reset positions of PacMan and ghosts
+    
     public void resetPositions() {
         pacman.reset();
         pacman.velocityX = pacman.velocityY = 0;
@@ -376,14 +473,14 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         gameOver = true;
         gameLoop.stop();
     
-        // Create a custom dialog for username input
+        
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new BorderLayout());
         inputPanel.setBackground(Color.BLACK);
         inputPanel.setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 5));
     
         JLabel label = new JLabel("Enter your username:", SwingConstants.CENTER);
-        label.setFont(new Font("Courier New", Font.BOLD, 18)); // Clean arcade-style font
+        label.setFont(new Font("Courier New", Font.BOLD, 18)); 
         label.setForeground(Color.CYAN);
     
         JTextField textField = new JTextField();
@@ -417,7 +514,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         }
     
         showLeaderboard();
-        // showGameOver();
+      
     }
 
 

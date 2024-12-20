@@ -18,7 +18,6 @@ public class App {
             return;
         }
 
-        // Initialize variables for the game board: rows, columns, and tile size
         int rowCount = 23; 
         int columnCount = 19; 
         int tileSize = 32; 
@@ -27,39 +26,39 @@ public class App {
         int frameWidth = boardWidth + 40;  
         int frameHeight = boardHeight + 100; 
 
-        // Create JFrame for the game window. Set title, size, and other default properties
+      
         JFrame frame = new JFrame("Cyberpunk PacMan");
-        frame.setLayout(new BorderLayout()); // Use BorderLayout for organizing components
+        frame.setLayout(new BorderLayout()); 
         frame.setSize(frameWidth, frameHeight); 
-        frame.setLocationRelativeTo(null); // Center the window on the screen
+        frame.setLocationRelativeTo(null); 
         frame.setResizable(false); 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close app when the window is closed
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 
-        // Initialize the score panel e
+       
         ScorePanel scorePanel = new ScorePanel();
-        scorePanel.setPreferredSize(new Dimension(boardWidth, 40)); // Place it at the top
+        scorePanel.setPreferredSize(new Dimension(boardWidth, 40));
 
-        // Initialize the lives panel 
         LivesPanel livesPanel = new LivesPanel(3);
 
-        // Create the main game area and pass the score and lives panels to the game constructor
         PacMan pacmanGame = new PacMan(scorePanel, livesPanel);
-        pacmanGame.setPreferredSize(new Dimension(boardWidth, boardHeight)); // Match the board size
+        pacmanGame.setPreferredSize(new Dimension(boardWidth, boardHeight)); 
 
-        // Create a container panel to hold the score panel, game area, and lives panel together
+        
         JPanel containerPanel = new JPanel();
-        containerPanel.setLayout(new BorderLayout()); // Use BorderLayout for easy organization
+        containerPanel.setLayout(new BorderLayout()); 
         containerPanel.setPreferredSize(new Dimension(frameWidth, frameHeight)); 
         containerPanel.add(scorePanel, BorderLayout.NORTH); 
         containerPanel.add(pacmanGame, BorderLayout.CENTER); 
         containerPanel.add(livesPanel, BorderLayout.SOUTH); 
         containerPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 20)); 
 
-        // Add the container panel to the main frame
+       
         frame.add(containerPanel);
-        frame.pack(); // Adjust the frame size to fit its components
-        pacmanGame.requestFocus(); // Set focus to the game area for keyboard input
+        frame.pack(); 
+        pacmanGame.requestFocus(); 
         frame.setVisible(true); 
+
+        
     }
 }
 

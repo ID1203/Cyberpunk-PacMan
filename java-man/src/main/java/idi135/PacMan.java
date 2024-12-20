@@ -269,7 +269,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         pacmanRightImage = new ImageIcon(getClass().getResource("/pacmanRight.png")).getImage();
     }
 
-    // Load map and initialize elements
+ 
     private void loadMap() {
         walls = new HashSet<>();
         foods = new HashSet<>();
@@ -311,7 +311,6 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    // Initialize ghost movements
     private void initializeGhosts() {
         for (Block ghost : ghosts) {
             char newDirection = directions[random.nextInt(4)];
@@ -319,7 +318,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    // Paint components to render the game elements
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -330,14 +329,14 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    // Draw game elements on screen
+
     public void draw(Graphics g) {
         g.drawImage(pacman.image, pacman.x, pacman.y, pacman.width, pacman.height, null);
 
         if (isPowerUpActive) {
             Graphics2D g2d = (Graphics2D) g;
-            g2d.setColor(new Color(255, 255, 0, 50)); // Transparent yellow tint
-            g2d.fillRect(0, 0, boardWidth, boardHeight); // Overlay over entire screen
+            g2d.setColor(new Color(255, 255, 0, 50)); 
+            g2d.fillRect(0, 0, boardWidth, boardHeight); 
         }
 
         if (powerUp != null) {
@@ -357,7 +356,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    // Move PacMan and handle collisions
+
     public void move() {
         pacman.x += pacman.velocityX;
         pacman.y += pacman.velocityY;
@@ -375,20 +374,20 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         if (isPowerUpActive) {
             long elapsedTime = System.currentTimeMillis() - powerUpStartTime;
         
-            // Temporary invincibility
+      
             for (Block ghost : ghosts) {
                 if (collision(pacman, ghost)) {
-                    ghost.reset(); // Reset ghost position instead of reducing lives
+                    ghost.reset(); 
                 }
             }
         
-            // End power-up after duration
+         
             if (elapsedTime > powerUpDuration) {
                 isPowerUpActive = false;
             }
         }
         
-        // Handle ghost collisions
+
         for (Block ghost : ghosts) {
             ghost.x += ghost.velocityX;
             ghost.y += ghost.velocityY;
@@ -433,7 +432,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-        // Check food collisions
+    
         Block foodEaten = null;
         for (Block food : foods) {
             if (collision(pacman, food)) {
@@ -468,7 +467,6 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    // Game Over logic
     public void gameOver() {
         gameOver = true;
         gameLoop.stop();
@@ -517,8 +515,6 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
       
     }
 
-
-
     public void nextLevel() {
         if (level < tileMaps.length - 1) {
             level++;  
@@ -545,29 +541,28 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
                     leaderboard.add(playerScore);
                 }
     
-                // Sort leaderboard by score (highest to lowest)
+               
                 leaderboard.sort((p1, p2) -> Integer.compare(p2.score, p1.score));
     
-                // Create custom leaderboard panel
+                
                 JPanel leaderboardPanel = new JPanel();
-                leaderboardPanel.setLayout(new GridLayout(6, 1)); // Header + top 5 players
+                leaderboardPanel.setLayout(new GridLayout(6, 1)); 
                 leaderboardPanel.setBackground(Color.BLACK);
                 leaderboardPanel.setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 5));
     
                 JLabel header = new JLabel("Leaderboard", SwingConstants.CENTER);
                 header.setForeground(Color.CYAN);
-                header.setFont(new Font("Press Start 2P", Font.BOLD, 24)); // Replace with a pixel font
+                header.setFont(new Font("Press Start 2P", Font.BOLD, 24)); 
                 leaderboardPanel.add(header);
     
                 for (int i = 0; i < Math.min(5, leaderboard.size()); i++) {
                     PlayerScore playerScore = leaderboard.get(i);
                     JLabel entry = new JLabel((i + 1) + ". " + playerScore.name + " - " + playerScore.score + " points", SwingConstants.CENTER);
                     entry.setForeground(Color.YELLOW);
-                    entry.setFont(new Font("Press Start 2P", Font.PLAIN, 18)); // Replace with a pixel font
+                    entry.setFont(new Font("Press Start 2P", Font.PLAIN, 18)); 
                     leaderboardPanel.add(entry);
                 }
     
-                // Display leaderboard in a dialog with a custom title and background
                 JOptionPane.showMessageDialog(
                     PacMan.this,
                     leaderboardPanel,

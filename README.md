@@ -19,7 +19,7 @@ Cyberpunk PacMan is a Java-based game that brings a modern twist to the classic 
 ## Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/cyberpunk-pacman.git
+   git clone https://github.com/ID1203/Cyberpunk-PacMan
    ```
 2. Install the necessary dependencies, including Firebase SDK.
 3. Configure Firebase:
@@ -79,9 +79,10 @@ Example of Level 1:
 ```
 
 ## Screenshots
-_Include screenshots of gameplay and leaderboard to showcase the UI._
 
 
-## Acknowledgments
-- Inspired by the classic PacMan game.
-- Special thanks to Firebase for seamless cloud integration.
+![image](https://github.com/user-attachments/assets/bbfc4942-036e-4512-9bb8-2742736c2422)
+
+
+
+
